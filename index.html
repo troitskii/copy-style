@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LogoAI — Создайте логотип с помощью ИИ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --gradient: linear-gradient(135deg, #7B5CF0, #3B82F6);
+            --gradient-hover: linear-gradient(135deg, #6A4BD9, #2B6FE0);
+            --bg: #ffffff;
+            --bg-alt: #f7f7f9;
+            --text: #1a1a2e;
+            --text-secondary: #6b7280;
+            --card-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+            --card-shadow-hover: 0 8px 32px rgba(123, 92, 240, 0.12);
+            --radius: 16px;
+            --radius-sm: 12px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text);
+            background: var(--bg);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 72px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: var(--gradient);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 18px;
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .nav a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav a:hover {
+            color: var(--text);
+        }
+
+        .btn-gradient {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 24px;
+            background: var(--gradient);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-gradient:hover {
+            opacity: 0.92;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(123, 92, 240, 0.3);
+        }
+
+        .mobile-menu {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .mobile-menu span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text);
+            margin: 5px 0;
+            border-radius: 2px;
+        }
+
+        /* Hero */
+        .hero {
+            padding: 160px 0 100px;
+            text-align: center;
+            background: linear-gradient(180deg, #f7f7f9 0%, #ffffff 100%);
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 800;
+            line-height: 1.15;
+            max-width: 720px;
+            margin: 0 auto 20px;
+            letter-spacing: -1px;
+        }
+
+        .hero h1 .gradient-text {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: var(--text-secondary);
+            max-width: 520px;
+            margin: 0 auto 40px;
+        }
+
+        .hero-input {
+            display: flex;
+            max-width: 560px;
+            margin: 0 auto 24px;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .hero-input input {
+            flex: 1;
+            padding: 18px 24px;
+            border: none;
+            font-size: 16px;
+            font-family: inherit;
+            outline: none;
+            background: transparent;
+        }
+
+        .hero-input input::placeholder {
+            color: #b0b0b0;
+        }
+
+        .hero-input button {
+            margin: 8px;
+            padding: 12px 28px;
+            white-space: nowrap;
+        }
+
+        .hero-tags {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .hero-tag {
+            display: inline-block;
+            padding: 8px 18px;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 100px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: border-color 0.2s, color 0.2s, background 0.2s;
+        }
+
+        .hero-tag:hover {
+            border-color: #7B5CF0;
+            color: #7B5CF0;
+            background: rgba(123, 92, 240, 0.04);
+        }
+
+        /* Sections */
+        section {
+            padding: 100px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 40px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 56px;
+            max-width: 540px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Advantages */
+        .advantages {
+            background: var(--bg-alt);
+        }
+
+        .advantages-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .advantage-card {
+            background: #fff;
+            border-radius: var(--radius);
+            padding: 36px 32px;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .advantage-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        .advantage-icon {
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+
+        .advantage-card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .advantage-card p {
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        /* Gallery */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .gallery-card {
+            background: #fff;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .gallery-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        .gallery-card-image {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            background: var(--bg-alt);
+        }
+
+        .gallery-card-info {
+            padding: 20px 24px;
+        }
+
+        .gallery-card-info h4 {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .gallery-card-info span {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Steps */
+        .steps {
+            background: var(--bg-alt);
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .step-card {
+            background: #fff;
+            border-radius: var(--radius);
+            padding: 40px 32px;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            position: relative;
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            background: var(--gradient);
+            color: #fff;
+            border-radius: 14px;
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .step-card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .step-card p {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        /* Pricing */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        .pricing-card {
+            background: #fff;
+            border-radius: var(--radius);
+            padding: 36px 28px;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            border: 2px solid transparent;
+            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        .pricing-card.popular {
+            border-color: #7B5CF0;
+            position: relative;
+        }
+
+        .pricing-badge {
+            position: absolute;
+            top: -13px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gradient);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 16px;
+            border-radius: 100px;
+            white-space: nowrap;
+        }
+
+        .pricing-card h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .pricing-price {
+            font-size: 40px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .pricing-price small {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .pricing-desc {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .pricing-card .btn-gradient {
+            width: 100%;
+            justify-content: center;
+            padding: 14px 24px;
+        }
+
+        .pricing-card .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 14px 24px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+            background: none;
+            cursor: pointer;
+            transition: border-color 0.2s, color 0.2s;
+            text-decoration: none;
+        }
+
+        .pricing-card .btn-outline:hover {
+            border-color: #7B5CF0;
+            color: #7B5CF0;
+        }
+
+        /* Reviews */
+        .reviews {
+            background: var(--bg-alt);
+        }
+
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .review-card {
+            background: #fff;
+            border-radius: var(--radius);
+            padding: 32px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .review-stars {
+            color: #FBBF24;
+            font-size: 16px;
+            margin-bottom: 16px;
+            letter-spacing: 2px;
+        }
+
+        .review-text {
+            font-size: 15px;
+            line-height: 1.7;
+            margin-bottom: 20px;
+            color: #374151;
+        }
+
+        .review-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .review-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .review-name {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .review-role {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* CTA */
+        .cta {
+            background: var(--gradient);
+            text-align: center;
+            padding: 80px 0;
+        }
+
+        .cta h2 {
+            font-size: 40px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+        }
+
+        .cta p {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 32px;
+        }
+
+        .btn-white {
+            display: inline-flex;
+            align-items: center;
+            padding: 16px 36px;
+            background: #fff;
+            color: #7B5CF0;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-white:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Footer */
+        .footer {
+            padding: 40px 0;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 14px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .pricing-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                display: none;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .hero {
+                padding: 120px 0 60px;
+            }
+
+            .hero h1 {
+                font-size: 34px;
+            }
+
+            .hero p {
+                font-size: 17px;
+            }
+
+            .hero-input {
+                flex-direction: column;
+            }
+
+            .hero-input button {
+                margin: 0 8px 8px;
+            }
+
+            .section-title {
+                font-size: 30px;
+            }
+
+            section {
+                padding: 60px 0;
+            }
+
+            .advantages-grid,
+            .gallery-grid,
+            .steps-grid,
+            .reviews-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                max-width: 380px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .cta h2 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+    <div class="container">
+        <a href="#" class="logo">
+            <span class="logo-icon">&#10022;</span>
+            LogoAI
+        </a>
+        <nav class="nav">
+            <a href="#examples">Примеры</a>
+            <a href="#pricing">Цены</a>
+            <a href="#reviews">Отзывы</a>
+            <a href="#hero" class="btn-gradient">Создать логотип</a>
+        </nav>
+        <button class="mobile-menu" aria-label="Меню">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</header>
+
+<!-- Hero -->
+<section class="hero" id="hero">
+    <div class="container">
+        <h1 class="fade-in">Создайте логотип для вашего бизнеса <span class="gradient-text">с помощью ИИ</span></h1>
+        <p class="fade-in">Профессиональный логотип за 2 минуты без дизайнера</p>
+        <div class="hero-input fade-in">
+            <input type="text" placeholder="Опишите ваш бизнес...">
+            <button class="btn-gradient">Создать логотип</button>
+        </div>
+        <div class="hero-tags fade-in">
+            <span class="hero-tag">&#9749; Кофейня</span>
+            <span class="hero-tag">&#128187; IT-стартап</span>
+            <span class="hero-tag">&#127947; Фитнес-клуб</span>
+        </div>
+    </div>
+</section>
+
+<!-- Advantages -->
+<section class="advantages">
+    <div class="container">
+        <h2 class="section-title fade-in">Почему LogoAI?</h2>
+        <p class="section-subtitle fade-in">Мы объединяем нейросети и лучшие практики дизайна</p>
+        <div class="advantages-grid">
+            <div class="advantage-card fade-in">
+                <div class="advantage-icon">&#127912;</div>
+                <h3>Уникальный дизайн</h3>
+                <p>ИИ создаёт логотип специально под ваш бизнес. Никаких шаблонов — каждый результат уникален.</p>
+            </div>
+            <div class="advantage-card fade-in">
+                <div class="advantage-icon">&#9889;</div>
+                <h3>Быстро и просто</h3>
+                <p>Результат через 30 секунд, без опыта в дизайне. Просто опишите свой бизнес — остальное сделает ИИ.</p>
+            </div>
+            <div class="advantage-card fade-in">
+                <div class="advantage-icon">&#128176;</div>
+                <h3>Выгодно</h3>
+                <p>От 290₽ вместо 5 000₽ у фрилансера. Профессиональное качество за доступную цену.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Examples -->
+<section id="examples">
+    <div class="container">
+        <h2 class="section-title fade-in">Примеры логотипов</h2>
+        <p class="section-subtitle fade-in">Созданы нашим ИИ по текстовому описанию</p>
+        <div class="gallery-grid">
+
+            <div class="gallery-card fade-in">
+                <div class="gallery-card-image">
+                    <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="60" cy="56" r="28" fill="#7B5CF0" opacity="0.12"/>
+                        <path d="M42 68C42 56 48 44 60 44C72 44 78 56 78 68" stroke="#7B5CF0" stroke-width="4" stroke-linecap="round"/>
+                        <path d="M38 68H82" stroke="#7B5CF0" stroke-width="4" stroke-linecap="round"/>
+                        <path d="M50 68V76C50 78 52 80 54 80H66C68 80 70 78 70 76V68" stroke="#7B5CF0" stroke-width="3" stroke-linecap="round"/>
+                        <path d="M56 44V36" stroke="#7B5CF0" stroke-width="3" stroke-linecap="round"/>
+                        <path d="M64 44V38" stroke="#7B5CF0" stroke-width="3" stroke-linecap="round"/>
+                        <circle cx="60" cy="34" r="3" fill="#7B5CF0"/>
+                        <text x="60" y="100" text-anchor="middle" fill="#1a1a2e" font-family="Inter, sans-serif" font-weight="700" font-size="16">Brew</text>
+                    </svg>
+                </div>
+                <div class="gallery-card-info">
+                    <h4>Brew</h4>
+                    <span>Кофейня</span>
+                </div>
+            </div>
+
+            <div class="gallery-card fade-in">
+                <div class="gallery-card-image">
+                    <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="32" y="32" width="56" height="56" rx="14" fill="#3B82F6" opacity="0.1"/>
+                        <path d="M44 60L54 42L64 60L74 42" stroke="#3B82F6" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M44 60L54 78L64 60L74 78" stroke="#3B82F6" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="59" cy="60" r="6" fill="#3B82F6" opacity="0.25"/>
+                        <text x="60" y="104" text-anchor="middle" fill="#1a1a2e" font-family="Inter, sans-serif" font-weight="700" font-size="16">Nexus</text>
+                    </svg>
+                </div>
+                <div class="gallery-card-info">
+                    <h4>Nexus</h4>
+                    <span>IT-компания</span>
+                </div>
+            </div>
+
+            <div class="gallery-card fade-in">
+                <div class="gallery-card-image">
+                    <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="60" cy="55" r="26" stroke="#EF4444" stroke-width="4" fill="none"/>
+                        <path d="M60 35V55L72 67" stroke="#EF4444" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M46 72C46 72 52 82 60 82C68 82 74 72 74 72" stroke="#EF4444" stroke-width="3" stroke-linecap="round"/>
+                        <circle cx="60" cy="55" r="4" fill="#EF4444"/>
+                        <text x="60" y="104" text-anchor="middle" fill="#1a1a2e" font-family="Inter, sans-serif" font-weight="700" font-size="16">Pulse</text>
+                    </svg>
+                </div>
+                <div class="gallery-card-info">
+                    <h4>Pulse</h4>
+                    <span>Фитнес-клуб</span>
+                </div>
+            </div>
+
+            <div class="gallery-card fade-in">
+                <div class="gallery-card-image">
+                    <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M36 72L60 36L84 72H36Z" fill="#F59E0B" opacity="0.1"/>
+                        <path d="M36 72L60 36L84 72H36Z" stroke="#F59E0B" stroke-width="3"/>
+                        <circle cx="60" cy="60" r="10" fill="none" stroke="#F59E0B" stroke-width="3"/>
+                        <path d="M56 58L60 54L64 58" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M56 64L60 60L64 64" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <text x="60" y="100" text-anchor="middle" fill="#1a1a2e" font-family="Inter, sans-serif" font-weight="700" font-size="16">Savoy</text>
+                    </svg>
+                </div>
+                <div class="gallery-card-info">
+                    <h4>Savoy</h4>
+                    <span>Ресторан</span>
+                </div>
+            </div>
+
+            <div class="gallery-card fade-in">
+                <div class="gallery-card-image">
+                    <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="38" y="36" width="44" height="44" rx="8" fill="#8B5CF6" opacity="0.1"/>
+                        <path d="M50 56L56 50L62 56L68 50" stroke="#8B5CF6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M50 68L56 62L62 68L68 62" stroke="#8B5CF6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="46" cy="46" r="4" fill="#8B5CF6" opacity="0.3"/>
+                        <circle cx="74" cy="74" r="3" fill="#8B5CF6" opacity="0.3"/>
+                        <text x="60" y="100" text-anchor="middle" fill="#1a1a2e" font-family="Inter, sans-serif" font-weight="700" font-size="16">Craft</text>
+                    </svg>
+                </div>
+                <div class="gallery-card-info">
+                    <h4>Craft</h4>
+                    <span>Студия дизайна</span>
+                </div>
+            </div>
+
+            <div class="gallery-card fade-in">
+                <div class="gallery-card-image">
+                    <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="60" cy="55" r="26" fill="#06B6D4" opacity="0.08"/>
+                        <path d="M40 55C40 55 48 40 60 45C72 50 68 65 80 55" stroke="#06B6D4" stroke-width="4" stroke-linecap="round"/>
+                        <path d="M40 65C40 65 48 50 60 55C72 60 68 75 80 65" stroke="#06B6D4" stroke-width="4" stroke-linecap="round" opacity="0.5"/>
+                        <circle cx="40" cy="55" r="3" fill="#06B6D4"/>
+                        <circle cx="80" cy="55" r="3" fill="#06B6D4"/>
+                        <text x="60" y="100" text-anchor="middle" fill="#1a1a2e" font-family="Inter, sans-serif" font-weight="700" font-size="16">Flow</text>
+                    </svg>
+                </div>
+                <div class="gallery-card-info">
+                    <h4>Flow</h4>
+                    <span>Маркетинговое агентство</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- Steps -->
+<section class="steps">
+    <div class="container">
+        <h2 class="section-title fade-in">Как это работает</h2>
+        <p class="section-subtitle fade-in">Три простых шага до вашего логотипа</p>
+        <div class="steps-grid">
+            <div class="step-card fade-in">
+                <div class="step-number">1</div>
+                <h3>Опишите бизнес</h3>
+                <p>Расскажите, чем занимается ваша компания — ИИ поймёт стиль и настроение</p>
+            </div>
+            <div class="step-card fade-in">
+                <div class="step-number">2</div>
+                <h3>ИИ генерирует варианты</h3>
+                <p>Нейросеть создаст несколько уникальных вариантов логотипа за секунды</p>
+            </div>
+            <div class="step-card fade-in">
+                <div class="step-number">3</div>
+                <h3>Скачайте в PNG/SVG</h3>
+                <p>Выберите лучший вариант и скачайте в нужном формате для любых целей</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing -->
+<section id="pricing">
+    <div class="container">
+        <h2 class="section-title fade-in">Цены</h2>
+        <p class="section-subtitle fade-in">Начните бесплатно, масштабируйтесь по мере роста</p>
+        <div class="pricing-grid">
+            <div class="pricing-card fade-in">
+                <h3>Пробный</h3>
+                <div class="pricing-price">0<small>₽</small></div>
+                <p class="pricing-desc">1 генерация логотипа</p>
+                <a href="#hero" class="btn-outline">Попробовать</a>
+            </div>
+            <div class="pricing-card fade-in">
+                <h3>Стартовый</h3>
+                <div class="pricing-price">290<small>₽</small></div>
+                <p class="pricing-desc">5 логотипов</p>
+                <a href="#" class="btn-outline">Выбрать</a>
+            </div>
+            <div class="pricing-card popular fade-in">
+                <span class="pricing-badge">Популярный</span>
+                <h3>Бизнес</h3>
+                <div class="pricing-price">990<small>₽</small></div>
+                <p class="pricing-desc">20 логотипов</p>
+                <a href="#" class="btn-gradient">Выбрать</a>
+            </div>
+            <div class="pricing-card fade-in">
+                <h3>Агентство</h3>
+                <div class="pricing-price">2 490<small>₽</small></div>
+                <p class="pricing-desc">100 логотипов</p>
+                <a href="#" class="btn-outline">Выбрать</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Reviews -->
+<section class="reviews" id="reviews">
+    <div class="container">
+        <h2 class="section-title fade-in">Отзывы клиентов</h2>
+        <p class="section-subtitle fade-in">Более 12 000 предпринимателей уже используют LogoAI</p>
+        <div class="reviews-grid">
+            <div class="review-card fade-in">
+                <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="review-text">Заказывал логотип у фрилансера за 8 000₽ — ждал неделю и результат не понравился. Здесь за 5 минут получил именно то, что нужно.</p>
+                <div class="review-author">
+                    <div class="review-avatar" style="background: #7B5CF0;">А</div>
+                    <div>
+                        <div class="review-name">Алексей Морозов</div>
+                        <div class="review-role">Владелец кофейни</div>
+                    </div>
+                </div>
+            </div>
+            <div class="review-card fade-in">
+                <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="review-text">Мы запускали стартап и не хотели тратить бюджет на дизайнера. LogoAI выручил — логотип выглядит как работа профессионала.</p>
+                <div class="review-author">
+                    <div class="review-avatar" style="background: #3B82F6;">М</div>
+                    <div>
+                        <div class="review-name">Мария Ким</div>
+                        <div class="review-role">Co-founder, IT-стартап</div>
+                    </div>
+                </div>
+            </div>
+            <div class="review-card fade-in">
+                <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="review-text">Удобно, что сразу можно скачать в SVG. Использую для вывесок, визиток и сайта — везде отлично смотрится.</p>
+                <div class="review-author">
+                    <div class="review-avatar" style="background: #EF4444;">Д</div>
+                    <div>
+                        <div class="review-name">Дмитрий Волков</div>
+                        <div class="review-role">Фитнес-тренер</div>
+                    </div>
+                </div>
+            </div>
+            <div class="review-card fade-in">
+                <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="review-text">Для маркетплейса нужен был логотип срочно. Сделала за пару минут, клиенты говорят — выглядит стильно и профессионально.</p>
+                <div class="review-author">
+                    <div class="review-avatar" style="background: #F59E0B;">Е</div>
+                    <div>
+                        <div class="review-name">Екатерина Соловьёва</div>
+                        <div class="review-role">Продавец на Wildberries</div>
+                    </div>
+                </div>
+            </div>
+            <div class="review-card fade-in">
+                <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="review-text">Сделал логотипы для 8 проектов за один вечер. Раньше на это ушёл бы месяц и минимум 40 000₽. Рекомендую всем агентствам.</p>
+                <div class="review-author">
+                    <div class="review-avatar" style="background: #8B5CF6;">И</div>
+                    <div>
+                        <div class="review-name">Игорь Петренко</div>
+                        <div class="review-role">Руководитель digital-агентства</div>
+                    </div>
+                </div>
+            </div>
+            <div class="review-card fade-in">
+                <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="review-text">Открывала пекарню и не знала, с чего начать с брендингом. LogoAI предложил варианты, которые идеально передали настроение.</p>
+                <div class="review-author">
+                    <div class="review-avatar" style="background: #06B6D4;">О</div>
+                    <div>
+                        <div class="review-name">Ольга Назарова</div>
+                        <div class="review-role">Владелица пекарни</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+    <div class="container">
+        <h2 class="fade-in">Создайте свой логотип прямо сейчас</h2>
+        <p class="fade-in">Первая генерация бесплатно — без регистрации</p>
+        <a href="#hero" class="btn-white fade-in">Создать логотип</a>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        &copy; 2026 LogoAI. Все права защищены.
+    </div>
+</footer>
+
+<script>
+    // Intersection Observer for fade-in animations
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.fade-in').forEach((el) => observer.observe(el));
+
+    // Tag click fills input
+    document.querySelectorAll('.hero-tag').forEach((tag) => {
+        tag.addEventListener('click', () => {
+            const input = document.querySelector('.hero-input input');
+            const map = { 'Кофейня': 'Уютная кофейня в центре города', 'IT-стартап': 'Технологический стартап в сфере AI', 'Фитнес-клуб': 'Современный фитнес-клуб' };
+            const key = tag.textContent.trim().replace(/^[^\s]+\s/, '');
+            input.value = map[key] || key;
+            input.focus();
+        });
+    });
+</script>
+
+</body>
+</html>
